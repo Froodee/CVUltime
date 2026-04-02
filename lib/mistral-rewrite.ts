@@ -31,25 +31,24 @@ function buildUserPrompt(cvText: string, jobText: string): string {
   return `Réécris ce CV en JSON structuré pour un format 2 colonnes A4, STRICTEMENT 1 PAGE.
 
 OBJECTIF DOUBLE :
-1. Remplir une page A4 entière en 2 colonnes (ni trop, ni trop peu).
+1. REMPLIR LA PAGE A4 ENTIÈRE — pas de blanc en bas. Le contenu doit occuper toute la hauteur.
 2. Maximiser la compatibilité ATS avec l'offre d'emploi fournie.
 
 OPTIMISATION ATS :
 - Réutilise les mots-clés EXACTS de l'offre dans les bullets et l'accroche (les ATS font du matching exact).
 - Mets en avant les compétences techniques demandées dans l'offre en premier dans la liste.
 - Le titre doit reprendre l'intitulé du poste de l'offre.
-- paragrapheMotsCles : intègre les mots-clés restants de l'offre non couverts ailleurs (technologies, méthodes, certifications).
 
-RÈGLES DE VOLUME :
-- accroche : 3 phrases, environ 50-60 mots.
-- experiences : toutes les expériences du CV (max 4). 3 bullets par expérience, 12-18 mots chacun.
-- paragrapheMotsCles : 3-4 phrases naturelles (60-80 mots). Doit remplir l'espace restant en bas à droite.
-- competences : toutes les compétences pertinentes, max 14 éléments, 1-5 mots chacun.
+RÈGLES DE VOLUME — génère suffisamment pour remplir la page :
+- accroche : 4-5 phrases percutantes, 70-90 mots minimum.
+- experiences : toutes les expériences (max 4). 3-4 bullets par expérience, 15-20 mots chacun, détaillés et orientés résultats.
+- paragrapheMotsCles : MINIMUM 120 mots. 5-7 phrases fluides et naturelles intégrant tous les mots-clés de l'offre restants (technologies, méthodes, soft skills, certifications). C'est la section qui remplit l'espace blanc en bas — elle doit être substantielle.
+- competences : toutes les compétences pertinentes, max 14 éléments.
 - contact : max 4 lignes.
 - formation : toutes les formations, max 3 entrées.
 - langues : toutes les langues, max 3 entrées.
 
-Tu n'inventes RIEN. Tu reformules ce qui existe. Pas d'astérisques, pas de markdown dans les valeurs.
+Tu n'inventes RIEN. Tu reformules et enrichis ce qui existe. Pas d'astérisques, pas de markdown dans les valeurs.
 
 Retourne ce JSON :
 {
@@ -84,7 +83,7 @@ export async function rewriteCV(cvText: string, jobText: string): Promise<CvStru
       { role: "user", content: buildUserPrompt(cvText, jobText) },
     ],
     temperature: 0.15,
-    maxTokens: 2500,
+    maxTokens: 3200,
   })
 
   const content = response.choices?.[0]?.message?.content
