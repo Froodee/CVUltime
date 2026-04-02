@@ -36,7 +36,7 @@ async function extractFromPdf(buffer: Buffer): Promise<string> {
 
   if (!text || text.length < 50) {
     throw new Error(
-      "Le PDF semble vide ou illisible. Vérifiez qu'il contient du texte (pas uniquement des images)."
+      "Impossible d'extraire le texte de ce PDF. Assurez-vous d'uploader votre CV original (avec texte sélectionnable), pas un PDF généré par scan ou par image."
     )
   }
 

@@ -314,9 +314,12 @@ export default function RewritePage() {
           <div className="rounded-xl border border-[#1e293b] bg-[#1e293b] p-5">
             <h2 className="mb-4 text-sm font-semibold text-white flex items-center gap-2">
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white">1</span>
-              Ton CV
+              Ton CV original
             </h2>
             <UploadCv onFileSelect={handleFileSelect} file={formState.cv} />
+            <p className="mt-2 text-[11px] text-[#64748b]">
+              Uploade ton CV original avec texte sélectionnable — pas le PDF exporté par CVUltime (celui-ci est une image).
+            </p>
           </div>
 
           <div className="rounded-xl border border-[#1e293b] bg-[#1e293b] p-5">
