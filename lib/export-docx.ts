@@ -221,8 +221,8 @@ export async function telechargerDocx(cv: CvStructure, nomFichierOriginal: strin
       bottom: { style: BorderStyle.NONE, size: 0 },
       left: { style: BorderStyle.NONE, size: 0 },
       right: { style: BorderStyle.NONE, size: 0 },
-      insideH: { style: BorderStyle.NONE, size: 0 },
-      insideV: { style: BorderStyle.NONE, size: 0 },
+      insideHorizontal: { style: BorderStyle.NONE, size: 0 },
+      insideVertical: { style: BorderStyle.NONE, size: 0 },
     },
     rows: [
       new TableRow({
