@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth, currentUser } from "@clerk/nextjs/server"
-import { stripe, PRIX_CREDIT, CREDITS_PAR_ACHAT } from "@/lib/stripe"
+import { getStripe, PRIX_CREDIT, CREDITS_PAR_ACHAT } from "@/lib/stripe"
 import { upsertUser } from "@/lib/credits"
 
 export async function POST(req: NextRequest) {
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Création de la session Stripe Checkout
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     mode: "payment",
     payment_method_types: ["card"],
     customer_email: email,
