@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
       data: {
         userId: dbUserId,
         scoreGlobal: result.score_global,
-        resultJson: result as Record<string, unknown>,
+        resultJson: JSON.parse(JSON.stringify(result)),
         cvFileName: cvFile.name,
         isFree: true,
       },
