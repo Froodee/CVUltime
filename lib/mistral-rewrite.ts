@@ -28,16 +28,18 @@ const SYSTEM_PROMPT = `Tu es un expert en rédaction de CVs format 2 colonnes, o
 Tu retournes UNIQUEMENT un JSON valide, sans markdown, sans backticks, sans texte avant ou après.`
 
 function buildUserPrompt(cvText: string, jobText: string): string {
-  return `Réécris ce CV en JSON structuré pour un format 2 colonnes, 1 page.
+  return `Réécris ce CV en JSON structuré pour un format 2 colonnes A4, 1 page COMPLÈTE.
 
-RÈGLES :
-- Garde TOUTES les compétences du CV. Mets les plus pertinentes pour l'offre en premier.
-- AJUSTE la densité du contenu pour remplir la page :
-  * Si le CV a beaucoup d'expériences → garde les 2-3 plus pertinentes, 2 bullets chacune
-  * Si le CV a peu d'expériences → garde-les toutes, 3-4 bullets chacune avec plus de détail
-  * Si la colonne droite a encore de l'espace → allonge l'accroche à 3-4 phrases
-- paragrapheMotsCles : 2-3 phrases naturelles et fluides intégrant les mots-clés importants de l'offre (technologies, méthodes, soft skills). Ça doit sonner comme un vrai paragraphe, pas une liste. Ce paragraphe remplit l'espace blanc restant dans la colonne droite.
-- Tu n'inventes RIEN sur le candidat. Tu reformules ce qui existe.
+OBJECTIF PRIORITAIRE : le contenu doit REMPLIR UNE PAGE A4 ENTIÈRE. Pas de blanc en bas.
+
+RÈGLES DE DENSITÉ (applique-les toutes) :
+- Garde TOUTES les compétences du CV (minimum 8-12 compétences). Mets les plus pertinentes pour l'offre en premier.
+- Colonne gauche : liste toutes les compétences, toutes les langues, toute la formation.
+- Colonne droite :
+  * accroche : 3-4 phrases percutantes, minimum 60 mots.
+  * experiences : garde toutes les expériences. Pour chaque expérience, 3-4 bullets détaillés (minimum 10 mots chacun).
+  * paragrapheMotsCles : 4-6 phrases naturelles et fluides (minimum 80 mots au total) intégrant les mots-clés importants de l'offre (technologies, méthodes, soft skills). Ce paragraphe DOIT remplir l'espace restant en bas de la colonne droite.
+- Tu n'inventes RIEN sur le candidat. Tu reformules et détailles ce qui existe.
 - Pas d'astérisques, pas de markdown dans les valeurs.
 
 Retourne ce JSON :
@@ -73,7 +75,7 @@ export async function rewriteCV(cvText: string, jobText: string): Promise<CvStru
       { role: "user", content: buildUserPrompt(cvText, jobText) },
     ],
     temperature: 0.15,
-    maxTokens: 2000,
+    maxTokens: 3500,
   })
 
   const content = response.choices?.[0]?.message?.content

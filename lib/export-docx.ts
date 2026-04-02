@@ -13,6 +13,7 @@ import {
   ShadingType,
   AlignmentType,
   VerticalAlign,
+  HeightRule,
 } from "docx"
 import { saveAs } from "file-saver"
 import type { CvStructure } from "@/lib/mistral-rewrite"
@@ -226,6 +227,9 @@ export async function telechargerDocx(cv: CvStructure, nomFichierOriginal: strin
     },
     rows: [
       new TableRow({
+        // A4 height (16838 twips) minus top+bottom margins (600+600) = ~15600
+        // AT_LEAST: row expands with content but minimum fills the page
+        height: { value: 15600, rule: HeightRule.ATLEAST },
         children: [
           // Colonne gauche — fond bleu
           new TableCell({
