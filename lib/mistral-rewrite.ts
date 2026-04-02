@@ -30,18 +30,20 @@ Tu retournes UNIQUEMENT un JSON valide, sans markdown, sans backticks, sans text
 function buildUserPrompt(cvText: string, jobText: string): string {
   return `Réécris ce CV en JSON structuré pour un format 2 colonnes A4, STRICTEMENT 1 PAGE.
 
-CONTRAINTES ABSOLUES DE VOLUME — respecte-les à la lettre :
-- accroche : 2 phrases maximum, 40 mots maximum.
-- experiences : maximum 3 expériences. EXACTEMENT 2 bullets par expérience. Chaque bullet : 10-15 mots maximum.
-- paragrapheMotsCles : 2-3 phrases maximum, 40 mots maximum.
-- competences : maximum 12 éléments, chacun en 1-4 mots.
-- contact : maximum 4 lignes.
-- formation : maximum 2 entrées.
-- langues : maximum 3 entrées.
+OBJECTIF : remplir une page A4 entière en 2 colonnes. Ni trop, ni trop peu.
+
+RÈGLES :
+- accroche : 3 phrases, environ 50-60 mots.
+- experiences : toutes les expériences du CV (max 4). 3 bullets par expérience, 12-18 mots chacun.
+- paragrapheMotsCles : 3-4 phrases naturelles (60-80 mots) intégrant les mots-clés de l'offre. Doit remplir l'espace restant en bas à droite.
+- competences : toutes les compétences pertinentes, max 14 éléments, 1-5 mots chacun.
+- contact : max 4 lignes.
+- formation : toutes les formations, max 3 entrées.
+- langues : toutes les langues, max 3 entrées.
 
 PRIORITÉS :
 - Garde les expériences et compétences les plus pertinentes pour l'offre.
-- Tu n'inventes RIEN. Tu reformules ce qui existe en respectant les limites ci-dessus.
+- Tu n'inventes RIEN. Tu reformules ce qui existe.
 - Pas d'astérisques, pas de markdown dans les valeurs.
 
 Retourne ce JSON :
@@ -77,7 +79,7 @@ export async function rewriteCV(cvText: string, jobText: string): Promise<CvStru
       { role: "user", content: buildUserPrompt(cvText, jobText) },
     ],
     temperature: 0.15,
-    maxTokens: 1800,
+    maxTokens: 2500,
   })
 
   const content = response.choices?.[0]?.message?.content
@@ -106,12 +108,12 @@ function enforceLimits(cv: CvStructure): CvStructure {
   return {
     ...cv,
     contact: cv.contact.slice(0, 4),
-    competences: cv.competences.slice(0, 12),
+    competences: cv.competences.slice(0, 14),
     langues: cv.langues.slice(0, 3),
-    formation: cv.formation.slice(0, 2),
-    experiences: cv.experiences.slice(0, 3).map((exp) => ({
+    formation: cv.formation.slice(0, 3),
+    experiences: cv.experiences.slice(0, 4).map((exp) => ({
       ...exp,
-      bullets: exp.bullets.slice(0, 2),
+      bullets: exp.bullets.slice(0, 3),
     })),
   }
 }
