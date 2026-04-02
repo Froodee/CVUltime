@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String     @id @default(cuid())
+  clerkId   String     @unique
+  email     String     @unique
+  analyses  Analyse[]
+  paiements Paiement[]
+  isPremium Boolean    @default(false)
+  credits   Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Paiement {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  stripeSessionId String   @unique
+  montantCentimes Int
+  credits         Int
+  statut          String   // "pending" | "complete" | "expired"
+  createdAt       DateTime @default(now())
+}
+
+model Analyse {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  scoreGlobal Int
+  resultJson  Json
+  cvFileName  String
+  isFree      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
