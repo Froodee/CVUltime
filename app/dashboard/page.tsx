@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { ArrowRight, FileText, BarChart3 } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
+import type { Analyse } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 
 export const metadata: Metadata = {
@@ -100,7 +101,7 @@ export default async function DashboardPage() {
           ) : (
             /* Liste des analyses */
             <ul className="space-y-3">
-              {analyses.map((analyse) => {
+              {analyses.map((analyse: Analyse) => {
                 const { bg, text, label } = couleurScore(analyse.scoreGlobal)
                 return (
                   <li
