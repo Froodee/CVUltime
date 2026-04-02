@@ -14,10 +14,8 @@ async function renderWithAutoScale(cv: CvStructure): Promise<Buffer> {
     // Check page count using pdf-parse
     const { PDFParse } = await import("pdf-parse")
     const parser = new PDFParse({ data: new Uint8Array(buffer) })
-    const info = await parser.getInfo()
-
-    // Extract page count - the API might return different structures
-    const pageCount = (info as any).numpages || (info as any).pages || (info as any).numPages || 1
+    const info = await parser.getInfo() as { total?: number }
+    const pageCount = info.total ?? 1
 
     if (pageCount <= 1) {
       return buffer as unknown as Buffer
