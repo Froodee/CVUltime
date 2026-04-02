@@ -50,26 +50,26 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
         </span>
       </div>
 
-      {/* Document en 2 colonnes — proportions A4 (210/297) */}
+      {/* Document en 2 colonnes — proportions A4 (210/297) — toutes les couleurs en hex pour html2canvas */}
       <div ref={contentRef} className="flex aspect-[210/297]">
 
         {/* Colonne gauche — fond bleu foncé */}
-        <div className="w-[35%] shrink-0 bg-[#1e3a8a] p-5 flex flex-col gap-4">
+        <div className="w-[35%] shrink-0 p-5 flex flex-col gap-4" style={{ backgroundColor: "#1e3a8a" }}>
 
           {/* Nom + titre */}
           <div>
-            <h2 className="text-lg font-black text-white leading-tight">{cv.nom}</h2>
-            <p className="mt-1 text-xs text-blue-200 italic">{cv.titre}</p>
+            <h2 className="text-lg font-black leading-tight" style={{ color: "#ffffff" }}>{cv.nom}</h2>
+            <p className="mt-1 text-xs italic" style={{ color: "#bfdbfe" }}>{cv.titre}</p>
           </div>
 
           {/* Contact */}
           <div>
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-blue-300 border-b border-blue-700 pb-1">Contact</p>
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-widest pb-1" style={{ color: "#93c5fd", borderBottom: "1px solid #1d4ed8" }}>Contact</p>
             <div className="flex flex-col gap-1.5">
               {cv.contact.map((ligne, i) => (
                 <div key={i} className="flex items-start gap-1.5">
-                  <span className="text-blue-300 mt-0.5">{iconeContact(ligne)}</span>
-                  <span className="text-[10px] text-blue-100 break-all leading-snug">{ligne}</span>
+                  <span className="mt-0.5" style={{ color: "#93c5fd" }}>{iconeContact(ligne)}</span>
+                  <span className="text-[10px] break-all leading-snug" style={{ color: "#dbeafe" }}>{ligne}</span>
                 </div>
               ))}
             </div>
@@ -77,12 +77,12 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
 
           {/* Compétences */}
           <div>
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-blue-300 border-b border-blue-700 pb-1">Compétences</p>
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-widest pb-1" style={{ color: "#93c5fd", borderBottom: "1px solid #1d4ed8" }}>Compétences</p>
             <div className="flex flex-col gap-1">
               {cv.competences.map((comp, i) => (
                 <div key={i} className="flex items-center gap-1.5">
-                  <span className="h-1 w-1 rounded-full bg-blue-400 shrink-0" />
-                  <span className="text-[10px] text-blue-100">{comp}</span>
+                  <span className="h-1 w-1 rounded-full shrink-0" style={{ backgroundColor: "#60a5fa" }} />
+                  <span className="text-[10px]" style={{ color: "#dbeafe" }}>{comp}</span>
                 </div>
               ))}
             </div>
@@ -91,12 +91,12 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
           {/* Langues */}
           {cv.langues.length > 0 && (
             <div>
-              <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-blue-300 border-b border-blue-700 pb-1">Langues</p>
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-widest pb-1" style={{ color: "#93c5fd", borderBottom: "1px solid #1d4ed8" }}>Langues</p>
               <div className="flex flex-col gap-1">
                 {cv.langues.map((langue, i) => (
                   <div key={i} className="flex items-center gap-1.5">
-                    <span className="h-1 w-1 rounded-full bg-blue-400 shrink-0" />
-                    <span className="text-[10px] text-blue-100">{langue}</span>
+                    <span className="h-1 w-1 rounded-full shrink-0" style={{ backgroundColor: "#60a5fa" }} />
+                    <span className="text-[10px]" style={{ color: "#dbeafe" }}>{langue}</span>
                   </div>
                 ))}
               </div>
@@ -106,12 +106,12 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
           {/* Formation */}
           {cv.formation.length > 0 && (
             <div>
-              <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-blue-300 border-b border-blue-700 pb-1">Formation</p>
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-widest pb-1" style={{ color: "#93c5fd", borderBottom: "1px solid #1d4ed8" }}>Formation</p>
               <div className="flex flex-col gap-2">
                 {cv.formation.map((f, i) => (
                   <div key={i}>
-                    <p className="text-[10px] font-semibold text-white">{f.diplome}</p>
-                    <p className="text-[9px] text-blue-200">{f.etablissement} · {f.annee}</p>
+                    <p className="text-[10px] font-semibold" style={{ color: "#ffffff" }}>{f.diplome}</p>
+                    <p className="text-[9px]" style={{ color: "#bfdbfe" }}>{f.etablissement} · {f.annee}</p>
                   </div>
                 ))}
               </div>
@@ -120,30 +120,30 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
         </div>
 
         {/* Colonne droite — fond blanc */}
-        <div className="flex-1 bg-white p-6 flex flex-col gap-4">
+        <div className="flex-1 p-6 flex flex-col gap-4" style={{ backgroundColor: "#ffffff" }}>
 
           {/* Accroche */}
           <div>
-            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-800 border-b-2 border-blue-700 pb-1">Profil</p>
-            <p className="text-[10px] text-gray-700 leading-relaxed">{cv.accroche}</p>
+            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest pb-1" style={{ color: "#1e40af", borderBottom: "2px solid #1d4ed8" }}>Profil</p>
+            <p className="text-[10px] leading-relaxed" style={{ color: "#374151" }}>{cv.accroche}</p>
           </div>
 
           {/* Expériences */}
           <div>
-            <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-blue-800 border-b-2 border-blue-700 pb-1">Expériences</p>
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-widest pb-1" style={{ color: "#1e40af", borderBottom: "2px solid #1d4ed8" }}>Expériences</p>
             <div className="flex flex-col gap-3">
               {cv.experiences.map((exp, i) => (
                 <div key={i}>
                   <div className="flex items-baseline justify-between gap-2 flex-wrap">
-                    <p className="text-[10px] font-bold text-gray-900">{exp.poste}</p>
-                    <p className="text-[9px] text-gray-500 shrink-0">{exp.periode}</p>
+                    <p className="text-[10px] font-bold" style={{ color: "#111827" }}>{exp.poste}</p>
+                    <p className="text-[9px] shrink-0" style={{ color: "#6b7280" }}>{exp.periode}</p>
                   </div>
-                  <p className="text-[9px] text-blue-700 font-medium mb-1">{exp.entreprise}</p>
+                  <p className="text-[9px] font-medium mb-1" style={{ color: "#1d4ed8" }}>{exp.entreprise}</p>
                   <div className="flex flex-col gap-0.5">
                     {exp.bullets.map((b, j) => (
                       <div key={j} className="flex items-start gap-1.5">
-                        <span className="text-blue-600 font-bold text-[10px] shrink-0 mt-px">—</span>
-                        <span className="text-[9px] text-gray-700 leading-snug">{b}</span>
+                        <span className="font-bold text-[10px] shrink-0 mt-px" style={{ color: "#2563eb" }}>—</span>
+                        <span className="text-[9px] leading-snug" style={{ color: "#374151" }}>{b}</span>
                       </div>
                     ))}
                   </div>
@@ -152,11 +152,11 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
             </div>
           </div>
 
-          {/* Paragraphe mots-clés — titre discret, phrases naturelles */}
+          {/* Paragraphe mots-clés */}
           {cv.paragrapheMotsCles && (
             <div>
-              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-800 border-b-2 border-blue-700 pb-1">Domaines d&apos;expertise</p>
-              <p className="text-[9px] text-gray-600 leading-relaxed italic">{cv.paragrapheMotsCles}</p>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest pb-1" style={{ color: "#1e40af", borderBottom: "2px solid #1d4ed8" }}>Domaines d&apos;expertise</p>
+              <p className="text-[9px] leading-relaxed italic" style={{ color: "#4b5563" }}>{cv.paragrapheMotsCles}</p>
             </div>
           )}
         </div>
