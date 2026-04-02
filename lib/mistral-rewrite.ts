@@ -28,18 +28,20 @@ const SYSTEM_PROMPT = `Tu es un expert en rédaction de CVs format 2 colonnes, o
 Tu retournes UNIQUEMENT un JSON valide, sans markdown, sans backticks, sans texte avant ou après.`
 
 function buildUserPrompt(cvText: string, jobText: string): string {
-  return `Réécris ce CV en JSON structuré pour un format 2 colonnes A4, 1 page COMPLÈTE.
+  return `Réécris ce CV en JSON structuré pour un format 2 colonnes A4, STRICTEMENT 1 PAGE.
 
-OBJECTIF PRIORITAIRE : le contenu doit REMPLIR UNE PAGE A4 ENTIÈRE. Pas de blanc en bas.
+CONTRAINTES ABSOLUES DE VOLUME — respecte-les à la lettre :
+- accroche : 2 phrases maximum, 40 mots maximum.
+- experiences : maximum 3 expériences. EXACTEMENT 2 bullets par expérience. Chaque bullet : 10-15 mots maximum.
+- paragrapheMotsCles : 2-3 phrases maximum, 40 mots maximum.
+- competences : maximum 12 éléments, chacun en 1-4 mots.
+- contact : maximum 4 lignes.
+- formation : maximum 2 entrées.
+- langues : maximum 3 entrées.
 
-RÈGLES DE DENSITÉ (applique-les toutes) :
-- Garde TOUTES les compétences du CV (minimum 8-12 compétences). Mets les plus pertinentes pour l'offre en premier.
-- Colonne gauche : liste toutes les compétences, toutes les langues, toute la formation.
-- Colonne droite :
-  * accroche : 3-4 phrases percutantes, minimum 60 mots.
-  * experiences : garde toutes les expériences. Pour chaque expérience, 3-4 bullets détaillés (minimum 10 mots chacun).
-  * paragrapheMotsCles : 4-6 phrases naturelles et fluides (minimum 80 mots au total) intégrant les mots-clés importants de l'offre (technologies, méthodes, soft skills). Ce paragraphe DOIT remplir l'espace restant en bas de la colonne droite.
-- Tu n'inventes RIEN sur le candidat. Tu reformules et détailles ce qui existe.
+PRIORITÉS :
+- Garde les expériences et compétences les plus pertinentes pour l'offre.
+- Tu n'inventes RIEN. Tu reformules ce qui existe en respectant les limites ci-dessus.
 - Pas d'astérisques, pas de markdown dans les valeurs.
 
 Retourne ce JSON :
@@ -75,7 +77,7 @@ export async function rewriteCV(cvText: string, jobText: string): Promise<CvStru
       { role: "user", content: buildUserPrompt(cvText, jobText) },
     ],
     temperature: 0.15,
-    maxTokens: 3500,
+    maxTokens: 1800,
   })
 
   const content = response.choices?.[0]?.message?.content
@@ -89,9 +91,27 @@ export async function rewriteCV(cvText: string, jobText: string): Promise<CvStru
     .replace(/\s*```$/i, "")
     .trim()
 
+  let parsed: CvStructure
   try {
-    return JSON.parse(cleaned) as CvStructure
+    parsed = JSON.parse(cleaned) as CvStructure
   } catch {
     throw new Error("L'IA n'a pas retourné un CV structuré valide. Réessaie.")
+  }
+
+  // Hard limits — truncate if Mistral exceeded the prompt constraints
+  return enforceLimits(parsed)
+}
+
+function enforceLimits(cv: CvStructure): CvStructure {
+  return {
+    ...cv,
+    contact: cv.contact.slice(0, 4),
+    competences: cv.competences.slice(0, 12),
+    langues: cv.langues.slice(0, 3),
+    formation: cv.formation.slice(0, 2),
+    experiences: cv.experiences.slice(0, 3).map((exp) => ({
+      ...exp,
+      bullets: exp.bullets.slice(0, 2),
+    })),
   }
 }
