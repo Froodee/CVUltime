@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useRef, useEffect } from "react"
+import { useState, useCallback } from "react"
 import { UploadCv } from "@/components/upload-cv"
 import { OffreInput } from "@/components/offre-input"
 import { cn } from "@/lib/utils"
@@ -32,41 +32,8 @@ function iconeContact(ligne: string) {
   return <MapPin className="h-3 w-3 shrink-0" />
 }
 
-// A4 at 96dpi: 794×1123px — used for PDF capture
-const A4_W = 794
-const A4_H = 1123
-
-// Prévisualisation 2 colonnes du CV avec auto-scale pour tenir sur une page A4
-function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier: string; contentRef?: React.RefObject<HTMLDivElement | null> }) {
-  const wrapperRef = useRef<HTMLDivElement>(null)
-  const innerRef = useRef<HTMLDivElement>(null)
-  const [displayScale, setDisplayScale] = useState(1)
-  const [contentScale, setContentScale] = useState(1)
-
-  // Display scale: shrink the A4 box to fit the preview container width
-  useEffect(() => {
-    if (!wrapperRef.current) return
-    const w = wrapperRef.current.clientWidth
-    setDisplayScale(w / A4_W)
-  }, [])
-
-  // Content scale: shrink content to fit inside A4 height if it overflows
-  useEffect(() => {
-    const inner = innerRef.current
-    if (!inner) return
-    // Temporarily remove content scale to measure natural height
-    inner.style.transform = "none"
-    inner.style.width = "100%"
-    const naturalH = inner.scrollHeight
-    inner.style.transform = ""
-    inner.style.width = ""
-    if (naturalH > A4_H) {
-      setContentScale(A4_H / naturalH)
-    } else {
-      setContentScale(1)
-    }
-  }, [cv])
-
+// Prévisualisation 2 colonnes du CV
+function PreviewCV({ cv, nomFichier }: { cv: CvStructure; nomFichier: string }) {
   return (
     <div className="rounded-xl border border-[#334155] overflow-hidden shadow-xl">
       {/* Barre du document */}
@@ -83,30 +50,8 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
         </span>
       </div>
 
-      {/* Wrapper d'affichage — scale l'A4 pour tenir dans le preview */}
-      <div ref={wrapperRef} style={{ height: A4_H * displayScale, overflow: "hidden" }}>
-        {/* Page A4 en px fixes — capturée telle quelle par html2canvas */}
-        <div
-          ref={contentRef}
-          style={{
-            width: A4_W,
-            height: A4_H,
-            overflow: "hidden",
-            transform: `scale(${displayScale})`,
-            transformOrigin: "top left",
-          }}
-        >
-        {/* Contenu interne — scale si ça déborde */}
-        <div
-          ref={innerRef}
-          className="flex"
-          style={{
-            transform: `scale(${contentScale})`,
-            transformOrigin: "top left",
-            width: contentScale < 1 ? `${100 / contentScale}%` : "100%",
-            height: contentScale < 1 ? `${100 / contentScale}%` : "100%",
-          }}
-        >
+      {/* Aperçu — proportions A4 */}
+      <div className="flex" style={{ aspectRatio: "210/297" }}>
 
         {/* Colonne gauche — fond bleu foncé */}
         <div className="w-[35%] shrink-0 p-5 flex flex-col gap-4" style={{ backgroundColor: "#1e3a8a" }}>
@@ -215,9 +160,7 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
             </div>
           )}
         </div>
-        </div>{/* end innerRef / content scale */}
-        </div>{/* end contentRef / A4 fixed */}
-      </div>{/* end wrapperRef / display scale */}
+      </div>{/* end aperçu A4 */}
 
       <p className="bg-[#0f172a] px-4 py-2 text-[10px] text-[#475569] text-center">
         Aperçu — le PDF téléchargé aura exactement cette mise en page
@@ -237,7 +180,6 @@ export default function RewritePage() {
   const [erreurGlobale, setErreurGlobale] = useState<string>("")
   const [creditsBloques, setCreditsBloques] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
-  const previewRef = useRef<HTMLDivElement>(null)
 
   const handleFileSelect = useCallback((file: File | null) => {
     setFormState((prev) => ({ ...prev, cv: file }))
@@ -399,9 +341,8 @@ export default function RewritePage() {
                 type="button"
                 disabled={isExporting}
                 onClick={async () => {
-                  if (!previewRef.current) return
                   setIsExporting(true)
-                  await telechargerPdf(previewRef.current, formState.cv?.name ?? "cv")
+                  await telechargerPdf(cvReecrit, formState.cv?.name ?? "cv")
                   setIsExporting(false)
                 }}
                 className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/40 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-300 hover:bg-blue-500/20 hover:border-blue-400/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -411,7 +352,7 @@ export default function RewritePage() {
               </button>
             </div>
 
-            <PreviewCV cv={cvReecrit} nomFichier={formState.cv?.name ?? "cv"} contentRef={previewRef} />
+            <PreviewCV cv={cvReecrit} nomFichier={formState.cv?.name ?? "cv"} />
           </div>
         )}
       </div>
