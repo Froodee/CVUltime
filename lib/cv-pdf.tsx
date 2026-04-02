@@ -29,15 +29,17 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica",
     width: "100%",
     height: "100%",
+    overflow: "hidden",
   },
 
   // ── Colonne gauche ──────────────────────────────
   left: {
     width: "35%",
-    height: "100%",
+    maxHeight: 841,
     backgroundColor: BLEU,
     padding: 12,
     flexDirection: "column",
+    overflow: "hidden",
   },
   nom: {
     fontSize: 14,
@@ -103,11 +105,12 @@ const styles = StyleSheet.create({
   // ── Colonne droite ──────────────────────────────
   right: {
     flex: 1,
-    height: "100%",
+    maxHeight: 841,
     backgroundColor: BLANC,
     padding: 16,
     paddingLeft: 14,
     flexDirection: "column",
+    overflow: "hidden",
   },
   sectionTitleRight: {
     fontSize: 7.5,
@@ -181,8 +184,8 @@ export function CvDocument({ cv }: { cv: CvStructure }) {
     <Document>
       <Page size="A4" style={styles.page}>
 
-        {/* ── Colonne gauche — wrap=false force le clip à la page ── */}
-        <View style={styles.left} wrap={false}>
+        {/* ── Colonne gauche ── */}
+        <View style={styles.left}>
           <Text style={styles.nom}>{cv.nom}</Text>
           <Text style={styles.titre}>{cv.titre}</Text>
 
@@ -224,8 +227,8 @@ export function CvDocument({ cv }: { cv: CvStructure }) {
           )}
         </View>
 
-        {/* ── Colonne droite — wrap=false force le clip à la page ── */}
-        <View style={styles.right} wrap={false}>
+        {/* ── Colonne droite ── */}
+        <View style={styles.right}>
           <Text style={[styles.sectionTitleRight, { marginTop: 0 }]}>Profil</Text>
           <Text style={styles.accroche}>{cv.accroche}</Text>
 
