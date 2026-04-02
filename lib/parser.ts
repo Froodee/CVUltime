@@ -26,7 +26,8 @@ async function extractFromPdf(buffer: Buffer): Promise<string> {
   const { PDFParse } = await import("pdf-parse")
 
   // Convertit le Buffer Node.js en Uint8Array pour pdf-parse v2
-  const uint8Array = new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength)
+  // Use Buffer directly as Uint8Array to avoid byteOffset issues with pooled Node.js buffers
+  const uint8Array = new Uint8Array(buffer)
 
   const parser = new PDFParse({ data: uint8Array })
   const result = await parser.getText()
