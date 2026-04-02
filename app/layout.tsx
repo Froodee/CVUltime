@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { ClerkProvider, SignInButton, Show, UserButton } from "@clerk/nextjs"
 import "./globals.css"
 
@@ -44,7 +45,7 @@ export default function RootLayout({
           <header className="sticky top-0 z-50 border-b border-[#1e293b] bg-[#0f172a]/95 backdrop-blur-sm">
             <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
               {/* Logo */}
-              <a
+              <Link
                 href="/"
                 className="flex items-center gap-2 text-white font-bold text-lg hover:opacity-80 transition-opacity"
               >
@@ -52,17 +53,17 @@ export default function RootLayout({
                   CV
                 </span>
                 <span>CVUltime</span>
-              </a>
+              </Link>
 
               {/* Navigation */}
               <nav className="flex items-center gap-6">
-                <a
+                <Link
                   href="/analyse"
                   className="text-sm text-[#94a3b8] hover:text-white transition-colors hidden sm:block"
                 >
                   Analyser
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/rewrite"
                   className="hidden sm:inline-flex items-center gap-1.5 text-sm text-[#94a3b8] hover:text-white transition-colors"
                 >
@@ -70,20 +71,20 @@ export default function RootLayout({
                   <span className="rounded-full border border-purple-500/30 bg-purple-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-purple-300 leading-none">
                     Bêta
                   </span>
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/blog"
                   className="text-sm text-[#94a3b8] hover:text-white transition-colors hidden sm:block"
                 >
                   Blog
-                </a>
+                </Link>
                 <Show when="signed-in">
-                  <a
+                  <Link
                     href="/dashboard"
                     className="text-sm text-[#94a3b8] hover:text-white transition-colors hidden sm:block"
                   >
                     Dashboard
-                  </a>
+                  </Link>
                   <UserButton
                     appearance={{
                       elements: {

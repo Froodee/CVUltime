@@ -187,8 +187,7 @@ export async function POST(req: NextRequest) {
       data: {
         userId: dbUserId,
         scoreGlobal: result.score_global,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        resultJson: result as any,
+        resultJson: result as Record<string, unknown>,
         cvFileName: cvFile.name,
         isFree: true,
       },
