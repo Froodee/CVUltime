@@ -8,7 +8,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Font,
 } from "@react-pdf/renderer"
 import type { CvStructure } from "@/lib/mistral-rewrite"
 
@@ -21,152 +20,159 @@ const GRIS = "#374151"
 const GRIS_CLAIR = "#6b7280"
 const GRIS_SUBTITLE = "#4b5563"
 
+// A4 = 595pt × 842pt (react-pdf native unit)
+// Compact spacing to guarantee 1-page fit
+
 const styles = StyleSheet.create({
   page: {
     flexDirection: "row",
     fontFamily: "Helvetica",
+    width: "100%",
+    height: "100%",
   },
 
   // ── Colonne gauche ──────────────────────────────
   left: {
     width: "35%",
+    height: "100%",
     backgroundColor: BLEU,
-    padding: 16,
+    padding: 12,
     flexDirection: "column",
-    gap: 12,
   },
   nom: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Helvetica-Bold",
     color: BLANC,
-    marginBottom: 2,
+    marginBottom: 1,
   },
   titre: {
-    fontSize: 8,
+    fontSize: 7.5,
     color: BLEU_CLAIR,
     fontFamily: "Helvetica-Oblique",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   sectionTitleLeft: {
-    fontSize: 7,
+    fontSize: 6.5,
     fontFamily: "Helvetica-Bold",
     color: BLEU_MED,
     textTransform: "uppercase",
-    letterSpacing: 1,
+    letterSpacing: 0.8,
     borderBottomWidth: 0.5,
     borderBottomColor: BLEU_BORDER,
     paddingBottom: 2,
-    marginBottom: 4,
-    marginTop: 8,
+    marginBottom: 3,
+    marginTop: 7,
   },
   contactLine: {
-    fontSize: 7.5,
+    fontSize: 7,
     color: BLEU_CLAIR,
-    marginBottom: 2,
+    marginBottom: 1.5,
   },
   bullet: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 2,
+    marginBottom: 1.5,
   },
   bulletDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
     backgroundColor: "#60a5fa",
     marginTop: 2,
-    marginRight: 4,
+    marginRight: 3,
     flexShrink: 0,
   },
   bulletText: {
-    fontSize: 7.5,
+    fontSize: 7,
     color: BLEU_CLAIR,
     flex: 1,
+    lineHeight: 1.3,
   },
   formationDiplome: {
-    fontSize: 7.5,
+    fontSize: 7,
     fontFamily: "Helvetica-Bold",
     color: BLANC,
     marginBottom: 1,
   },
   formationMeta: {
-    fontSize: 7,
+    fontSize: 6.5,
     color: BLEU_CLAIR,
-    marginBottom: 4,
+    marginBottom: 3,
   },
 
   // ── Colonne droite ──────────────────────────────
   right: {
     flex: 1,
+    height: "100%",
     backgroundColor: BLANC,
-    padding: 20,
-    paddingLeft: 18,
+    padding: 16,
+    paddingLeft: 14,
     flexDirection: "column",
   },
   sectionTitleRight: {
-    fontSize: 8,
+    fontSize: 7.5,
     fontFamily: "Helvetica-Bold",
     color: BLEU,
     textTransform: "uppercase",
-    letterSpacing: 1,
-    borderBottomWidth: 1,
+    letterSpacing: 0.8,
+    borderBottomWidth: 0.75,
     borderBottomColor: BLEU_BORDER,
     paddingBottom: 2,
-    marginBottom: 5,
-    marginTop: 10,
+    marginBottom: 4,
+    marginTop: 8,
   },
   accroche: {
-    fontSize: 8,
+    fontSize: 7.5,
     color: GRIS,
-    lineHeight: 1.5,
-    marginBottom: 4,
+    lineHeight: 1.4,
+    marginBottom: 2,
   },
   expPoste: {
-    fontSize: 8.5,
+    fontSize: 8,
     fontFamily: "Helvetica-Bold",
     color: "#111827",
   },
   expMeta: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 2,
+    marginBottom: 1,
   },
   expEntreprise: {
-    fontSize: 7.5,
+    fontSize: 7,
     color: BLEU_BORDER,
     fontFamily: "Helvetica-Bold",
-    marginBottom: 2,
+    marginBottom: 1.5,
   },
   expPeriode: {
-    fontSize: 7,
+    fontSize: 6.5,
     color: GRIS_CLAIR,
   },
   expBullet: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginBottom: 1.5,
+    marginBottom: 1,
   },
   expBulletDash: {
-    fontSize: 8,
+    fontSize: 7.5,
     color: BLEU_BORDER,
     fontFamily: "Helvetica-Bold",
-    marginRight: 4,
+    marginRight: 3,
     lineHeight: 1.3,
   },
   expBulletText: {
-    fontSize: 7.5,
+    fontSize: 7,
     color: GRIS,
-    lineHeight: 1.4,
+    lineHeight: 1.35,
     flex: 1,
   },
   expBlock: {
-    marginBottom: 6,
+    marginBottom: 4,
   },
   motsCles: {
-    fontSize: 7.5,
+    fontSize: 7,
     color: GRIS_SUBTITLE,
     fontFamily: "Helvetica-Oblique",
-    lineHeight: 1.5,
+    lineHeight: 1.4,
   },
 })
 
@@ -175,8 +181,8 @@ export function CvDocument({ cv }: { cv: CvStructure }) {
     <Document>
       <Page size="A4" style={styles.page}>
 
-        {/* ── Colonne gauche ── */}
-        <View style={styles.left}>
+        {/* ── Colonne gauche — wrap=false force le clip à la page ── */}
+        <View style={styles.left} wrap={false}>
           <Text style={styles.nom}>{cv.nom}</Text>
           <Text style={styles.titre}>{cv.titre}</Text>
 
@@ -218,8 +224,8 @@ export function CvDocument({ cv }: { cv: CvStructure }) {
           )}
         </View>
 
-        {/* ── Colonne droite ── */}
-        <View style={styles.right}>
+        {/* ── Colonne droite — wrap=false force le clip à la page ── */}
+        <View style={styles.right} wrap={false}>
           <Text style={[styles.sectionTitleRight, { marginTop: 0 }]}>Profil</Text>
           <Text style={styles.accroche}>{cv.accroche}</Text>
 
