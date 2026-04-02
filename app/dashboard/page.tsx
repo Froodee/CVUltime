@@ -3,7 +3,9 @@ import { redirect } from "next/navigation"
 import { ArrowRight, FileText, BarChart3 } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
-import type { Analyse } from "@prisma/client"
+import type { Prisma } from "@prisma/client"
+
+type Analyse = Prisma.AnalyseGetPayload<Record<string, never>>
 import { prisma } from "@/lib/prisma"
 
 export const metadata: Metadata = {
