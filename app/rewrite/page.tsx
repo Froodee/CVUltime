@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { UploadCv } from "@/components/upload-cv"
 import { OffreInput } from "@/components/offre-input"
 import { cn } from "@/lib/utils"
@@ -32,8 +32,25 @@ function iconeContact(ligne: string) {
   return <MapPin className="h-3 w-3 shrink-0" />
 }
 
-// Prévisualisation 2 colonnes du CV
+// Prévisualisation 2 colonnes du CV avec auto-scale pour tenir sur une page A4
 function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier: string; contentRef?: React.RefObject<HTMLDivElement | null> }) {
+  const innerRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(1)
+
+  useEffect(() => {
+    const outer = contentRef?.current
+    const inner = innerRef.current
+    if (!outer || !inner) return
+    // scrollHeight = natural height ignoring overflow:hidden
+    const naturalH = inner.scrollHeight
+    const availH = outer.clientHeight
+    if (naturalH > availH && availH > 0) {
+      setScale(availH / naturalH)
+    } else {
+      setScale(1)
+    }
+  }, [cv, contentRef])
+
   return (
     <div className="rounded-xl border border-[#334155] overflow-hidden shadow-xl">
       {/* Barre du document */}
@@ -50,8 +67,18 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
         </span>
       </div>
 
-      {/* Document en 2 colonnes — proportions A4 (210/297) — toutes les couleurs en hex pour html2canvas */}
-      <div ref={contentRef} className="flex aspect-[210/297]">
+      {/* Conteneur A4 — overflow hidden pour clip au format exact */}
+      <div ref={contentRef} className="w-full overflow-hidden" style={{ aspectRatio: "210 / 297" }}>
+        {/* Inner wrapper — scale pour faire rentrer le contenu dans la page */}
+        <div
+          ref={innerRef}
+          className="flex"
+          style={{
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+            width: scale < 1 ? `${100 / scale}%` : "100%",
+          }}
+        >
 
         {/* Colonne gauche — fond bleu foncé */}
         <div className="w-[35%] shrink-0 p-5 flex flex-col gap-4" style={{ backgroundColor: "#1e3a8a" }}>
@@ -160,7 +187,8 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
             </div>
           )}
         </div>
-      </div>
+        </div>{/* end innerRef */}
+      </div>{/* end contentRef / A4 container */}
 
       <p className="bg-[#0f172a] px-4 py-2 text-[10px] text-[#475569] text-center">
         Aperçu — le PDF téléchargé aura exactement cette mise en page
