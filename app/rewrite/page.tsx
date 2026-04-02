@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef } from "react"
 import { UploadCv } from "@/components/upload-cv"
 import { OffreInput } from "@/components/offre-input"
 import { cn } from "@/lib/utils"
 import { Loader2, Sparkles, AlertCircle, Lock, Download, FileText, Mail, Phone, MapPin, Link } from "lucide-react"
 import { BoutonAchat } from "@/components/bouton-achat"
-import { telechargerDocx } from "@/lib/export-docx"
+import { telechargerPdf } from "@/lib/export-pdf"
 import type { CvStructure } from "@/lib/mistral-rewrite"
 
 type EtatRewrite = "idle" | "loading" | "success" | "error"
@@ -33,7 +33,7 @@ function iconeContact(ligne: string) {
 }
 
 // Prévisualisation 2 colonnes du CV
-function PreviewCV({ cv, nomFichier }: { cv: CvStructure; nomFichier: string }) {
+function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier: string; contentRef?: React.RefObject<HTMLDivElement | null> }) {
   return (
     <div className="rounded-xl border border-[#334155] overflow-hidden shadow-xl">
       {/* Barre du document */}
@@ -41,7 +41,7 @@ function PreviewCV({ cv, nomFichier }: { cv: CvStructure; nomFichier: string }) 
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-blue-400" />
           <span className="text-xs font-medium text-white">
-            {nomFichier.replace(/\.(pdf|docx)$/i, "") + "_optimise.docx"}
+            {nomFichier.replace(/\.(pdf|docx)$/i, "") + "_optimise.pdf"}
           </span>
         </div>
         <span className="flex items-center gap-1.5 text-xs text-green-400">
@@ -50,8 +50,8 @@ function PreviewCV({ cv, nomFichier }: { cv: CvStructure; nomFichier: string }) 
         </span>
       </div>
 
-      {/* Document en 2 colonnes */}
-      <div className="flex min-h-[700px]">
+      {/* Document en 2 colonnes — proportions A4 (210/297) */}
+      <div ref={contentRef} className="flex aspect-[210/297]">
 
         {/* Colonne gauche — fond bleu foncé */}
         <div className="w-[35%] shrink-0 bg-[#1e3a8a] p-5 flex flex-col gap-4">
@@ -163,7 +163,7 @@ function PreviewCV({ cv, nomFichier }: { cv: CvStructure; nomFichier: string }) 
       </div>
 
       <p className="bg-[#0f172a] px-4 py-2 text-[10px] text-[#475569] text-center">
-        Aperçu — le fichier .docx téléchargé aura la même mise en page
+        Aperçu — le PDF téléchargé aura exactement cette mise en page
       </p>
     </div>
   )
@@ -179,6 +179,8 @@ export default function RewritePage() {
   const [cvReecrit, setCvReecrit] = useState<CvStructure | null>(null)
   const [erreurGlobale, setErreurGlobale] = useState<string>("")
   const [creditsBloques, setCreditsBloques] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
+  const previewRef = useRef<HTMLDivElement>(null)
 
   const handleFileSelect = useCallback((file: File | null) => {
     setFormState((prev) => ({ ...prev, cv: file }))
@@ -335,15 +337,21 @@ export default function RewritePage() {
               <h2 className="text-xl font-bold text-white">Ton CV réécrit</h2>
               <button
                 type="button"
-                onClick={() => telechargerDocx(cvReecrit, formState.cv?.name ?? "cv")}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/40 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-300 hover:bg-blue-500/20 hover:border-blue-400/60 transition-colors"
+                disabled={isExporting}
+                onClick={async () => {
+                  if (!previewRef.current) return
+                  setIsExporting(true)
+                  await telechargerPdf(previewRef.current, formState.cv?.name ?? "cv")
+                  setIsExporting(false)
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/40 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-300 hover:bg-blue-500/20 hover:border-blue-400/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Download className="h-4 w-4" />
-                Télécharger .docx
+                {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                {isExporting ? "Génération…" : "Télécharger PDF"}
               </button>
             </div>
 
-            <PreviewCV cv={cvReecrit} nomFichier={formState.cv?.name ?? "cv"} />
+            <PreviewCV cv={cvReecrit} nomFichier={formState.cv?.name ?? "cv"} contentRef={previewRef} />
           </div>
         )}
       </div>
