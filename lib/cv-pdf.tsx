@@ -23,163 +23,173 @@ const GRIS_SUBTITLE = "#4b5563"
 // A4 = 595pt × 842pt (react-pdf native unit)
 // Compact spacing to guarantee 1-page fit
 
-const styles = StyleSheet.create({
-  page: {
-    flexDirection: "row",
-    fontFamily: "Helvetica",
-    width: "100%",
-    height: "100%",
-    overflow: "hidden",
-  },
+// Helper function to scale values based on fontScale
+function s(base: number, scale: number): number {
+  return base * scale
+}
 
-  // ── Colonne gauche ──────────────────────────────
-  left: {
-    width: "35%",
-    maxHeight: 841,
-    backgroundColor: BLEU,
-    padding: 12,
-    flexDirection: "column",
-    overflow: "hidden",
-  },
-  nom: {
-    fontSize: 14,
-    fontFamily: "Helvetica-Bold",
-    color: BLANC,
-    marginBottom: 1,
-  },
-  titre: {
-    fontSize: 7.5,
-    color: BLEU_CLAIR,
-    fontFamily: "Helvetica-Oblique",
-    marginBottom: 6,
-  },
-  sectionTitleLeft: {
-    fontSize: 6.5,
-    fontFamily: "Helvetica-Bold",
-    color: BLEU_MED,
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-    borderBottomWidth: 0.5,
-    borderBottomColor: BLEU_BORDER,
-    paddingBottom: 2,
-    marginBottom: 3,
-    marginTop: 7,
-  },
-  contactLine: {
-    fontSize: 7,
-    color: BLEU_CLAIR,
-    marginBottom: 1.5,
-  },
-  bullet: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 1.5,
-  },
-  bulletDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: "#60a5fa",
-    marginTop: 2,
-    marginRight: 3,
-    flexShrink: 0,
-  },
-  bulletText: {
-    fontSize: 7,
-    color: BLEU_CLAIR,
-    flex: 1,
-    lineHeight: 1.3,
-  },
-  formationDiplome: {
-    fontSize: 7,
-    fontFamily: "Helvetica-Bold",
-    color: BLANC,
-    marginBottom: 1,
-  },
-  formationMeta: {
-    fontSize: 6.5,
-    color: BLEU_CLAIR,
-    marginBottom: 3,
-  },
+// Dynamic styles function that takes fontScale into account
+function createStyles(fontScale: number) {
+  return StyleSheet.create({
+    page: {
+      flexDirection: "row",
+      fontFamily: "Helvetica",
+      width: "100%",
+      height: "100%",
+      overflow: "hidden",
+    },
 
-  // ── Colonne droite ──────────────────────────────
-  right: {
-    flex: 1,
-    maxHeight: 841,
-    backgroundColor: BLANC,
-    padding: 16,
-    paddingLeft: 14,
-    flexDirection: "column",
-    overflow: "hidden",
-  },
-  sectionTitleRight: {
-    fontSize: 7.5,
-    fontFamily: "Helvetica-Bold",
-    color: BLEU,
-    textTransform: "uppercase",
-    letterSpacing: 0.8,
-    borderBottomWidth: 0.75,
-    borderBottomColor: BLEU_BORDER,
-    paddingBottom: 2,
-    marginBottom: 4,
-    marginTop: 8,
-  },
-  accroche: {
-    fontSize: 7.5,
-    color: GRIS,
-    lineHeight: 1.4,
-    marginBottom: 2,
-  },
-  expPoste: {
-    fontSize: 8,
-    fontFamily: "Helvetica-Bold",
-    color: "#111827",
-  },
-  expMeta: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 1,
-  },
-  expEntreprise: {
-    fontSize: 7,
-    color: BLEU_BORDER,
-    fontFamily: "Helvetica-Bold",
-    marginBottom: 1.5,
-  },
-  expPeriode: {
-    fontSize: 6.5,
-    color: GRIS_CLAIR,
-  },
-  expBullet: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: 1,
-  },
-  expBulletDash: {
-    fontSize: 7.5,
-    color: BLEU_BORDER,
-    fontFamily: "Helvetica-Bold",
-    marginRight: 3,
-    lineHeight: 1.3,
-  },
-  expBulletText: {
-    fontSize: 7,
-    color: GRIS,
-    lineHeight: 1.35,
-    flex: 1,
-  },
-  expBlock: {
-    marginBottom: 4,
-  },
-  motsCles: {
-    fontSize: 7,
-    color: GRIS_SUBTITLE,
-    fontFamily: "Helvetica-Oblique",
-    lineHeight: 1.4,
-  },
-})
+    // ── Colonne gauche ──────────────────────────────
+    left: {
+      width: "35%",
+      maxHeight: 841,
+      backgroundColor: BLEU,
+      padding: s(12, fontScale),
+      flexDirection: "column",
+      overflow: "hidden",
+    },
+    nom: {
+      fontSize: s(14, fontScale),
+      fontFamily: "Helvetica-Bold",
+      color: BLANC,
+      marginBottom: s(1, fontScale),
+    },
+    titre: {
+      fontSize: s(7.5, fontScale),
+      color: BLEU_CLAIR,
+      fontFamily: "Helvetica-Oblique",
+      marginBottom: s(6, fontScale),
+    },
+    sectionTitleLeft: {
+      fontSize: s(6.5, fontScale),
+      fontFamily: "Helvetica-Bold",
+      color: BLEU_MED,
+      textTransform: "uppercase",
+      letterSpacing: 0.8,
+      borderBottomWidth: 0.5,
+      borderBottomColor: BLEU_BORDER,
+      paddingBottom: s(2, fontScale),
+      marginBottom: s(3, fontScale),
+      marginTop: s(7, fontScale),
+    },
+    contactLine: {
+      fontSize: s(7, fontScale),
+      color: BLEU_CLAIR,
+      marginBottom: s(1.5, fontScale),
+    },
+    bullet: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      marginBottom: s(1.5, fontScale),
+    },
+    bulletDot: {
+      width: s(3, fontScale),
+      height: s(3, fontScale),
+      borderRadius: s(1.5, fontScale),
+      backgroundColor: "#60a5fa",
+      marginTop: s(2, fontScale),
+      marginRight: s(3, fontScale),
+      flexShrink: 0,
+    },
+    bulletText: {
+      fontSize: s(7, fontScale),
+      color: BLEU_CLAIR,
+      flex: 1,
+      lineHeight: 1.3,
+    },
+    formationDiplome: {
+      fontSize: s(7, fontScale),
+      fontFamily: "Helvetica-Bold",
+      color: BLANC,
+      marginBottom: s(1, fontScale),
+    },
+    formationMeta: {
+      fontSize: s(6.5, fontScale),
+      color: BLEU_CLAIR,
+      marginBottom: s(3, fontScale),
+    },
 
-export function CvDocument({ cv }: { cv: CvStructure }) {
+    // ── Colonne droite ──────────────────────────────
+    right: {
+      flex: 1,
+      maxHeight: 841,
+      backgroundColor: BLANC,
+      padding: s(16, fontScale),
+      paddingLeft: s(14, fontScale),
+      flexDirection: "column",
+      overflow: "hidden",
+    },
+    sectionTitleRight: {
+      fontSize: s(7.5, fontScale),
+      fontFamily: "Helvetica-Bold",
+      color: BLEU,
+      textTransform: "uppercase",
+      letterSpacing: 0.8,
+      borderBottomWidth: 0.75,
+      borderBottomColor: BLEU_BORDER,
+      paddingBottom: s(2, fontScale),
+      marginBottom: s(4, fontScale),
+      marginTop: s(8, fontScale),
+    },
+    accroche: {
+      fontSize: s(7.5, fontScale),
+      color: GRIS,
+      lineHeight: 1.4,
+      marginBottom: s(2, fontScale),
+    },
+    expPoste: {
+      fontSize: s(8, fontScale),
+      fontFamily: "Helvetica-Bold",
+      color: "#111827",
+    },
+    expMeta: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginBottom: s(1, fontScale),
+    },
+    expEntreprise: {
+      fontSize: s(7, fontScale),
+      color: BLEU_BORDER,
+      fontFamily: "Helvetica-Bold",
+      marginBottom: s(1.5, fontScale),
+    },
+    expPeriode: {
+      fontSize: s(6.5, fontScale),
+      color: GRIS_CLAIR,
+    },
+    expBullet: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      marginBottom: s(1, fontScale),
+    },
+    expBulletDash: {
+      fontSize: s(7.5, fontScale),
+      color: BLEU_BORDER,
+      fontFamily: "Helvetica-Bold",
+      marginRight: s(3, fontScale),
+      lineHeight: 1.3,
+    },
+    expBulletText: {
+      fontSize: s(7, fontScale),
+      color: GRIS,
+      lineHeight: 1.35,
+      flex: 1,
+    },
+    expBlock: {
+      marginBottom: s(4, fontScale),
+    },
+    motsCles: {
+      fontSize: s(7, fontScale),
+      color: GRIS_SUBTITLE,
+      fontFamily: "Helvetica-Oblique",
+      lineHeight: 1.4,
+    },
+  })
+}
+
+export function CvDocument({ cv, fontScale = 1.0 }: { cv: CvStructure; fontScale?: number }) {
+  const styles = createStyles(fontScale)
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
