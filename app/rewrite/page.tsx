@@ -32,24 +32,40 @@ function iconeContact(ligne: string) {
   return <MapPin className="h-3 w-3 shrink-0" />
 }
 
+// A4 at 96dpi: 794×1123px — used for PDF capture
+const A4_W = 794
+const A4_H = 1123
+
 // Prévisualisation 2 colonnes du CV avec auto-scale pour tenir sur une page A4
 function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier: string; contentRef?: React.RefObject<HTMLDivElement | null> }) {
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const innerRef = useRef<HTMLDivElement>(null)
-  const [scale, setScale] = useState(1)
+  const [displayScale, setDisplayScale] = useState(1)
+  const [contentScale, setContentScale] = useState(1)
 
+  // Display scale: shrink the A4 box to fit the preview container width
   useEffect(() => {
-    const outer = contentRef?.current
+    if (!wrapperRef.current) return
+    const w = wrapperRef.current.clientWidth
+    setDisplayScale(w / A4_W)
+  }, [])
+
+  // Content scale: shrink content to fit inside A4 height if it overflows
+  useEffect(() => {
     const inner = innerRef.current
-    if (!outer || !inner) return
-    // scrollHeight = natural height ignoring overflow:hidden
+    if (!inner) return
+    // Temporarily remove content scale to measure natural height
+    inner.style.transform = "none"
+    inner.style.width = "100%"
     const naturalH = inner.scrollHeight
-    const availH = outer.clientHeight
-    if (naturalH > availH && availH > 0) {
-      setScale(availH / naturalH)
+    inner.style.transform = ""
+    inner.style.width = ""
+    if (naturalH > A4_H) {
+      setContentScale(A4_H / naturalH)
     } else {
-      setScale(1)
+      setContentScale(1)
     }
-  }, [cv, contentRef])
+  }, [cv])
 
   return (
     <div className="rounded-xl border border-[#334155] overflow-hidden shadow-xl">
@@ -67,16 +83,28 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
         </span>
       </div>
 
-      {/* Conteneur A4 — overflow hidden pour clip au format exact */}
-      <div ref={contentRef} className="w-full overflow-hidden" style={{ aspectRatio: "210 / 297" }}>
-        {/* Inner wrapper — scale pour faire rentrer le contenu dans la page */}
+      {/* Wrapper d'affichage — scale l'A4 pour tenir dans le preview */}
+      <div ref={wrapperRef} style={{ height: A4_H * displayScale, overflow: "hidden" }}>
+        {/* Page A4 en px fixes — capturée telle quelle par html2canvas */}
+        <div
+          ref={contentRef}
+          style={{
+            width: A4_W,
+            height: A4_H,
+            overflow: "hidden",
+            transform: `scale(${displayScale})`,
+            transformOrigin: "top left",
+          }}
+        >
+        {/* Contenu interne — scale si ça déborde */}
         <div
           ref={innerRef}
           className="flex"
           style={{
-            transform: `scale(${scale})`,
+            transform: `scale(${contentScale})`,
             transformOrigin: "top left",
-            width: scale < 1 ? `${100 / scale}%` : "100%",
+            width: contentScale < 1 ? `${100 / contentScale}%` : "100%",
+            height: contentScale < 1 ? `${100 / contentScale}%` : "100%",
           }}
         >
 
@@ -187,8 +215,9 @@ function PreviewCV({ cv, nomFichier, contentRef }: { cv: CvStructure; nomFichier
             </div>
           )}
         </div>
-        </div>{/* end innerRef */}
-      </div>{/* end contentRef / A4 container */}
+        </div>{/* end innerRef / content scale */}
+        </div>{/* end contentRef / A4 fixed */}
+      </div>{/* end wrapperRef / display scale */}
 
       <p className="bg-[#0f172a] px-4 py-2 text-[10px] text-[#475569] text-center">
         Aperçu — le PDF téléchargé aura exactement cette mise en page
