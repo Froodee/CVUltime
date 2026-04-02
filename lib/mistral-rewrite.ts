@@ -30,21 +30,26 @@ Tu retournes UNIQUEMENT un JSON valide, sans markdown, sans backticks, sans text
 function buildUserPrompt(cvText: string, jobText: string): string {
   return `Réécris ce CV en JSON structuré pour un format 2 colonnes A4, STRICTEMENT 1 PAGE.
 
-OBJECTIF : remplir une page A4 entière en 2 colonnes. Ni trop, ni trop peu.
+OBJECTIF DOUBLE :
+1. Remplir une page A4 entière en 2 colonnes (ni trop, ni trop peu).
+2. Maximiser la compatibilité ATS avec l'offre d'emploi fournie.
 
-RÈGLES :
+OPTIMISATION ATS :
+- Réutilise les mots-clés EXACTS de l'offre dans les bullets et l'accroche (les ATS font du matching exact).
+- Mets en avant les compétences techniques demandées dans l'offre en premier dans la liste.
+- Le titre doit reprendre l'intitulé du poste de l'offre.
+- paragrapheMotsCles : intègre les mots-clés restants de l'offre non couverts ailleurs (technologies, méthodes, certifications).
+
+RÈGLES DE VOLUME :
 - accroche : 3 phrases, environ 50-60 mots.
 - experiences : toutes les expériences du CV (max 4). 3 bullets par expérience, 12-18 mots chacun.
-- paragrapheMotsCles : 3-4 phrases naturelles (60-80 mots) intégrant les mots-clés de l'offre. Doit remplir l'espace restant en bas à droite.
+- paragrapheMotsCles : 3-4 phrases naturelles (60-80 mots). Doit remplir l'espace restant en bas à droite.
 - competences : toutes les compétences pertinentes, max 14 éléments, 1-5 mots chacun.
 - contact : max 4 lignes.
 - formation : toutes les formations, max 3 entrées.
 - langues : toutes les langues, max 3 entrées.
 
-PRIORITÉS :
-- Garde les expériences et compétences les plus pertinentes pour l'offre.
-- Tu n'inventes RIEN. Tu reformules ce qui existe.
-- Pas d'astérisques, pas de markdown dans les valeurs.
+Tu n'inventes RIEN. Tu reformules ce qui existe. Pas d'astérisques, pas de markdown dans les valeurs.
 
 Retourne ce JSON :
 {
