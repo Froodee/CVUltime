@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "SaaS d'analyse ATS de CV",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
